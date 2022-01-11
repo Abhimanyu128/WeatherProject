@@ -29,22 +29,39 @@ app.post("/", function(req, res) {
       const weatherData = JSON.parse(data);
       //console.log(weatherData.cod);
 
-      if (weatherData.cod === 200) {
-        const temp = weatherData.main.temp;
-        // console.log(temp);
-        const icon = weatherData.weather[0].icon;
-        const imgURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
-        const weatherDescription = weatherData.weather[0].description;
-        // console.log(weatherDescription);
+      // if (weatherData.cod === 200) {
+      //   const temp = weatherData.main.temp;
+      //   // console.log(temp);
+      //   const icon = weatherData.weather[0].icon;
+      //   const imgURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+      //   const weatherDescription = weatherData.weather[0].description;
+      //   // console.log(weatherDescription);
+      //
+      //   res.write(`<h1>The temperature in ${city} is ${temp} degrees Celsius.</h1>`);
+      //   res.write("<h3>The weather description is currently " + weatherDescription + ".</h3>");
+      //   res.write(`<img src=${imgURL}>`);
+      //   res.send();
+      // } else {
+      //   res.send(`<h1>${weatherData.message}</h1>`);
+      // }
 
-        res.write(`<h1>The temperature in ${city} is ${temp} degrees Celsius.</h1>`);
-        res.write("<h3>The weather description is currently " + weatherDescription + ".</h3>");
-        res.write(`<img src=${imgURL}>`);
-        res.send();
-      } else {
-        res.send(`<h1>${weatherData.message}</h1>`);
-      }
+      const x = async (weatherData)=>{
+        try {
+          const temp = await weatherData.main.temp;
+          // console.log(temp);
+          const icon = await weatherData.weather[0].icon;
+          const imgURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+          const weatherDescription = await weatherData.weather[0].description;
+          // console.log(weatherDescription);
 
+          res.write(`<h1>The temperature in ${city} is ${temp} degrees Celsius.</h1>`);
+          res.write("<h3>The weather description is currently " + weatherDescription + ".</h3>");
+          res.write(`<img src=${imgURL}>`);
+          res.send();
+        } catch (e) {
+          res.send("Not a valid city");
+        }
+      };
 
     });
   });
