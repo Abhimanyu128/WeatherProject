@@ -25,26 +25,51 @@ app.post("/", function(req, res) {
     //console.log(response.statusCode);
 
     response.on("data", function(data) {
-      // console.log(data);
-      const weatherData = JSON.parse(data);
-      //console.log(weatherData.cod);
+      // // console.log(data);
+      // const weatherData = JSON.parse(data);
+      // //console.log(weatherData.cod);
+      //
+      // if (weatherData.cod === 200) {
+      //   const temp = weatherData.main.temp;
+      //   // console.log(temp);
+      //   const icon = weatherData.weather[0].icon;
+      //   const imgURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+      //   const weatherDescription = weatherData.weather[0].description;
+      //   // console.log(weatherDescription);
+      //
+      //   res.write(`<h1>The temperature in ${city} is ${temp} degrees Celsius.</h1>`);
+      //   res.write("<h3>The weather description is currently " + weatherDescription + ".</h3>");
+      //   res.write(`<img src=${imgURL}>`);
+      //   res.send();
+      // } else {
+      //   res.send(`<h1>${weatherData.message}</h1>`);
+      // }
+      // function getJSONdata(data){
+      //   return JSON.parse(data);
+      // }
 
-      if (weatherData.cod === 200) {
-        const temp = weatherData.main.temp;
-        // console.log(temp);
-        const icon = weatherData.weather[0].icon;
-        const imgURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
-        const weatherDescription = weatherData.weather[0].description;
-        // console.log(weatherDescription);
+      const getJSONdata = new Promise(()=>{
+        return JSON.parse(data);
+      });
 
-        res.write(`<h1>The temperature in ${city} is ${temp} degrees Celsius.</h1>`);
-        res.write("<h3>The weather description is currently " + weatherDescription + ".</h3>");
-        res.write(`<img src=${imgURL}>`);
+      getJSONdata.then((data)=>{
+        let weatherData = {
+          temp: data.main.temp,
+          imgURL: "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png",
+          weatherDescription: data.weather[0].description
+        };
+
+        return weatherData;
+      })
+      .then((weatherData)=>{
+        res.write(`<h1>The temperature in ${city} is ${weatherData.temp} degrees Celsius.</h1>`);
+        res.write("<h3>The weather description is currently " + weatherData.weatherDescription + ".</h3>");
+        res.write(`<img src=${weatherData.imgURL}>`);
         res.send();
-      } else {
-        res.send(`<h1>${weatherData.message}</h1>`);
-      }
-
+      })
+      .catch((err)=>{
+        res.send(`<h1>${err.message}</h1>`);
+      });
 
     });
   });
